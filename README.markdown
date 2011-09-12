@@ -1,10 +1,10 @@
 # The plan of Karinto
 
-Karinto is a minimal application framework for PHP 5.3 and above inspired by [Silex](http://silex.sensiolabs.org/).
+Karinto is a minimal application framework for PHP 5.3 or later inspired by [Silex](http://silex.sensiolabs.org/).
 
 ## Required
 
- * PHP 5.3 or higher
+ * PHP 5.3.2 or later
  * mbstring
 
 ## Usage
