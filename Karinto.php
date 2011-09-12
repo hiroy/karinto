@@ -14,7 +14,26 @@ class Application
         'GET' => array(), 'POST' => array(),
         'PUT' => array(), 'DELETE' => array());
 
-    public function error($callback) {}
+    protected $_headers = array();
+    protected $_cookies = array();
+
+    public function __construct(array $options = array())
+    {
+        if (isset($options['template_dir'])) {
+            $this->templateDir = $options['template_dir'];
+        }
+        if (isset($options['encoding'])) {
+            $this->encoding = $encoding;
+        }
+    }
+
+    public function __destruct()
+    {
+    }
+
+    public function error($callback)
+    {
+    }
 
     public function get($url, $callback)
     {
@@ -44,11 +63,44 @@ class Application
         }
     }
 
-    public function fetch($template, $values) {}
+    public function fetch($template, $values)
+    {
+        $template = $this->templateDir . DIRECTORY_SEPARATOR . $template;
+        if (!is_file($template) || !is_readable($template)) {
+            throw new Exception("{$template} is unavailable");
+        }
 
-    public function render($template, $values) {}
+        extract($values, EXTR_SKIP);
 
-    public function redirect($url) {}
+        ob_start();
+        ob_implicit_flush(false);
+        include $template;
+        $result = ob_get_clean();
+
+        return $result;
+    }
+
+    public function render($template, $values)
+    {
+        $result = '';
+        try {
+            $result = $this->fetch($template, $values);
+        } catch (Exception $e) {
+            $this->code(404);
+        }
+        echo $result;
+    }
+
+    public function json($values)
+    {
+        $json = json_encode($values);
+        $this->contentType('application/json');
+        echo $json;
+    }
+
+    public function redirect($url)
+    {
+    }
 
     public function header($name)
     {
@@ -71,18 +123,12 @@ class Application
     {
     }
 
-    public function session() {}
-
-    public function run(array $options)
+    public function session()
     {
-        if (isset($options['template_dir'])) {
-            $this->templateDir = $options['template_dir'];
-        }
-        if (isset($options['encoding'])) {
-            $this->encoding = $encoding;
-        }
+    }
 
-        
+    public function run()
+    {
     }
 }
 
