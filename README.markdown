@@ -13,7 +13,9 @@ Karinto is a minimal application framework for PHP 5.3 or later inspired by [Sil
 
     <?php
     require_once 'Karinto.php';
-    use Karinto\Application, Karinto\Request;
+    
+    use Karinto\Application;
+    use Karinto\Request;
     
     $app = new Application(array(
         'template_dir' => 'templates',
