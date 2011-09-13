@@ -121,8 +121,19 @@ class Application
         $this->print($json);
     }
 
-    public function redirect($url)
+    public function redirect($url, $code = 302, $isSecure = false)
     {
+        if (substr($url, 0, 1) === '/') {
+            $httpHost = Utils::env('HTTP_HOST');
+            $url = ($isSecure ? 'https://' : 'http://') . $httpHost . $url;
+        }
+        while (ob_get_level() > 0) {
+            ob_end_clean();
+        }
+        $this->code($code);
+        $this->header('Location', $url);
+        $this->print('<html><head><meta http-equiv="refresh" content="0;'
+            . 'url=' . htmlentities($url, ENT_QUOTES) . '"></head></html>');
     }
 
     public function header($name, $value)
