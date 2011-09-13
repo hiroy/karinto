@@ -16,6 +16,7 @@ class Application
 
     protected $_headers = array();
     protected $_cookies = array();
+    protected $_body = '';
 
     public function __construct(array $options = array())
     {
@@ -25,10 +26,27 @@ class Application
         if (isset($options['encoding'])) {
             $this->encoding = $encoding;
         }
+        ob_start();
     }
 
     public function __destruct()
     {
+        // send headers
+        foreach ($this->_headers as $name => $value) {
+            if (ctype_digit(strval($name)) {
+                header($value);
+            } else {
+                header("{$name}: {$value}");
+            }
+        }
+        // send cookies
+        foreach ($this->_cookies as $c) {
+            setcookie($c['name'], $c['value'], $c['expire'],
+                $c['path'], $c['domain'], $c['secure'], $c['http_only']);
+        }
+        // output
+        echo $this->_body;
+        ob_end_flush();
     }
 
     public function error($callback)
@@ -63,6 +81,11 @@ class Application
         }
     }
 
+    public function print($text)
+    {
+        $this->_body .= $text;
+    }
+
     public function fetch($template, $values)
     {
         $template = $this->templateDir . DIRECTORY_SEPARATOR . $template;
@@ -88,30 +111,40 @@ class Application
         } catch (Exception $e) {
             $this->code(404);
         }
-        echo $result;
+        $this->print($result);
     }
 
     public function json($values)
     {
         $json = json_encode($values);
         $this->contentType('application/json');
-        echo $json;
+        $this->print($json);
     }
 
     public function redirect($url)
     {
     }
 
-    public function header($name)
+    public function header($name, $value)
     {
+        if (is_null($name)) {
+            $this->_headers[] = $value;
+        } else {
+            $this->_headers[$name] = $value;
+        }
     }
 
     public function contentType($type, $charset = null)
     {
+        if (is_null($charset)) {
+            $charset = $this->encoding;
+        }
+        $this->header('Content-Type', "{$type}; charset={$charset}");
     }
 
     public function contentTypeHtml($charset = null)
     {
+        $this->contentType('text/html', $charset);
     }
 
     public function code($code)
