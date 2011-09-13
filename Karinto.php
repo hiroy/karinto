@@ -11,7 +11,7 @@ class Application
     public $encoding = 'UTF-8';
     public $httpVersion = '1.1';
 
-    protected $routes = array(
+    protected $_routes = array(
         'GET' => array(), 'POST' => array(),
         'PUT' => array(), 'DELETE' => array());
 
@@ -51,28 +51,28 @@ class Application
     public function get($url, $callback)
     {
         if (is_callable($callback)) {
-            $this->routes['GET'][$url] = $callback;
+            $this->_routes['GET'][$url] = $callback;
         }
     }
 
     public function post($url, $callback)
     {
         if (is_callable($callback)) {
-            $this->routes['POST'][$url] = $callback;
+            $this->_routes['POST'][$url] = $callback;
         }
     }
 
     public function put($url, $callback)
     {
         if (is_callable($callback)) {
-            $this->routes['PUT'][$url] = $callback;
+            $this->_routes['PUT'][$url] = $callback;
         }
     }
 
     public function delete($url, $callback)
     {
         if (is_callable($callback)) {
-            $this->routes['DELETE'][$url] = $callback;
+            $this->_routes['DELETE'][$url] = $callback;
         }
     }
 
