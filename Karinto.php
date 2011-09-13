@@ -245,6 +245,41 @@ class Application
     public function run()
     {
         mb_internal_encoding($this->encoding);
+
+        // path info
+        $pathInfo = Utils::pathInfo();
+        $pathInfoPieces = explode('/', strtolower(trim($pathInfo, '/')));
+
+        // routes
+        $requestMethod = Utils::requestMethod();
+        $routes = array();
+        if (isset($this->_routes[$requestMethod])) {
+            $routes = $this->_routes[$requestMethod];
+        }
+
+        $urlParams = array();
+        while (count($pathInfoPieces) > 0) {
+
+            $urlPath = '/' . implode('/', $pathInfoPieces);
+
+            if (isset($routes[$urlPath])) {
+                $callback = $routes[$urlPath];
+                if (is_callable($callback)) {
+                    $req = new Request(array_reverse($urlParams));
+                    try {
+                        call_user_func($callback, $req);
+                        return;
+                    } catch (\Exception $e) {
+                        // uncaught exception
+                        $this->code(500);
+                    }
+                }
+            }
+            // not found
+            $urlParams[] = array_pop($pathInfoPieces);
+        }
+        // not found at last
+        $this->code(404);
     }
 }
 
@@ -254,24 +289,48 @@ class Request
     protected $_urlParams;
     protected $_cookies;
 
+    public function __construct(array $urlParams = array())
+    {
+        $this->_params = $_POST + $_GET;
+        $this->_urlParams = $urlParams;
+        $this->_cookies = $_COOKIE;
+    }
+
     public function __get($name)
     {
+        // only a single value will return
+        return $this->param($name);
     }
 
     public function __isset($name)
     {
+        return isset($this->_params[$name]);
     }
 
     public function param($name, $isMultiple = false)
     {
+        if (isset($this->_params[$name])) {
+            if ($isMultiple === is_array($this->_params[$name])) {
+                return $this->_params[$name];
+            }
+        }
+        return null;
     }
 
     public function urlParam($index)
     {
+        if (isset($this->_urlParams[$index])) {
+            return $this->_urlParams[$index];
+        }
+        return null;
     }
 
     public function cookie($name)
     {
+        if (isset($this->_cookies[$name])) {
+            return $this->_cookies[$name];
+        }
+        return null;
     }
 }
 
