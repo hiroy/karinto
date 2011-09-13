@@ -81,9 +81,14 @@ class Application
         $this->_body .= $text;
     }
 
+    public function template($template)
+    {
+        return $this->templateDir . DIRECTORY_SEPARATOR . $template;
+    }
+
     public function fetch($template, $values)
     {
-        $template = $this->templateDir . DIRECTORY_SEPARATOR . $template;
+        $template = $this->template($template);
         if (!is_file($template) || !is_readable($template)) {
             throw new Exception("{$template} is unavailable");
         }
