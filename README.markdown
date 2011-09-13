@@ -4,7 +4,7 @@ Karinto is a minimal application framework for PHP 5.3 or later inspired by [Sil
 
 ## Required
 
- * PHP 5.3.2 or later
+ * PHP 5.3 or later
  * mbstring
 
 ## Usage
