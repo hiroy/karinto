@@ -231,6 +231,15 @@ class Application
     public function cookie($name, $value, $expire = null,
         $path = '/', $domain = '', $secure = false, $httpOnly = false)
     {
+        $this->_cookies[] = array(
+            'name'      => $name,
+            'value'     => $value,
+            'expire'    => $expire,
+            'path'      => $path,
+            'domain'    => $domain,
+            'secure'    => $secure ? true : false,
+            'http_only' => $httpOnly,
+        );
     }
 
     public function session()
@@ -325,6 +334,23 @@ class Utils
         }
         return $requestMethod;
     }
+
+    public static function escapeHtml($var)
+    {
+        if (is_array($var)) {
+            return array_map(array(__CLASS__, __METHOD__), $var);
+        }
+        if (is_scalar($var)) {
+            $var = htmlspecialchars(
+                $var, ENT_QUOTES, mb_internal_encoding());
+        }
+        return $var;
+    }
+}
+
+function h($var)
+{
+    return Utils::escapeHtml($var);
 }
 
 class Exception extends \Exception
