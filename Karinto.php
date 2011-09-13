@@ -9,6 +9,7 @@ class Application
 {
     protected $templateDir = 'templates';
     protected $encoding = 'UTF-8';
+    protected $httpVersion = '1.1';
 
     protected $routes = array(
         'GET' => array(), 'POST' => array(),
@@ -25,6 +26,9 @@ class Application
         }
         if (isset($options['encoding'])) {
             $this->encoding = $encoding;
+        }
+        if (isset($options['http_version'])) {
+            $this->httpVersion = $options['http_version'];
         }
         ob_start();
     }
