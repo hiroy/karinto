@@ -1,9 +1,5 @@
 <?php
-namespace Karinto;
-
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-});
+namespace Karinto {
 
 class Application
 {
@@ -86,7 +82,7 @@ class Application
         return $this->templateDir . DIRECTORY_SEPARATOR . $template;
     }
 
-    public function fetch($template, $values)
+    public function fetch($template, array $values = array())
     {
         $template = $this->template($template);
         if (!is_file($template) || !is_readable($template)) {
@@ -103,7 +99,7 @@ class Application
         return $result;
     }
 
-    public function render($template, $values)
+    public function render($template, array $values = array())
     {
         $result = '';
         try {
@@ -404,11 +400,23 @@ class Utils
     }
 }
 
-function h($var)
-{
-    return Utils::escapeHtml($var);
-}
-
 class Exception extends \Exception
 {
+}
+
+}
+
+namespace {
+
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+});
+
+if (!function_exists('h')) {
+    function h($var)
+    {
+        return Karinto\Utils::escapeHtml($var);
+    }
+}
+
 }
