@@ -7,9 +7,9 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 
 class Application
 {
-    protected $templateDir = 'templates';
-    protected $encoding = 'UTF-8';
-    protected $httpVersion = '1.1';
+    public $templateDir = 'templates';
+    public $encoding = 'UTF-8';
+    public $httpVersion = '1.1';
 
     protected $routes = array(
         'GET' => array(), 'POST' => array(),
@@ -19,17 +19,8 @@ class Application
     protected $_cookies = array();
     protected $_body = '';
 
-    public function __construct(array $options = array())
+    public function __construct()
     {
-        if (isset($options['template_dir'])) {
-            $this->templateDir = $options['template_dir'];
-        }
-        if (isset($options['encoding'])) {
-            $this->encoding = $encoding;
-        }
-        if (isset($options['http_version'])) {
-            $this->httpVersion = $options['http_version'];
-        }
         ob_start();
     }
 
@@ -248,6 +239,7 @@ class Application
 
     public function run()
     {
+        mb_internal_encoding($this->encoding);
     }
 }
 
