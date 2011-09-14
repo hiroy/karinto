@@ -16,6 +16,8 @@ class Application
     protected $_cookies = array();
     protected $_body = '';
 
+    protected $_session;
+
     public function __construct()
     {
         ob_start();
@@ -35,6 +37,9 @@ class Application
         foreach ($this->_cookies as $c) {
             setcookie($c['name'], $c['value'], $c['expire'],
                 $c['path'], $c['domain'], $c['secure'], $c['http_only']);
+        }
+        if (!is_null($this->_session)) {
+            $this->_session->save();
         }
         // output
         echo $this->_body;
@@ -240,8 +245,10 @@ class Application
         if (strlen($this->sessionSecretKey) === 0) {
             throw new Exception('session secret key is not set');
         }
-        $session = new Session($this->sessionSecretKey);
-        return $session;
+        if (is_null($this->_session)) {
+            $this->_session = new Session($this->sessionSecretKey);
+        }
+        return $this->_session;
     }
 
     public function run()
