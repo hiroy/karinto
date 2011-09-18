@@ -1,4 +1,15 @@
 <?php
+/**
+ * Karinto - a minimal web application framework
+ *
+ * PHP version 5.3 or later
+ *
+ * @author    Hiroyuki Yamaoka
+ * @copyright 2011 Hiroyuki Yamaoka
+ * @link      https://github.com/hiroy/karinto
+ * @license   http://opensource.org/licenses/bsd-license.php New BSD License
+ */
+
 namespace Karinto {
 
 class Application
@@ -287,12 +298,11 @@ class Application
                     $req = new Request(array_reverse($urlParams));
                     try {
                         call_user_func($callback, $req);
-                        return;
                     } catch (\Exception $e) {
                         // uncaught exception
                         $this->code(500, $e);
-                        return;
                     }
+                    return;
                 }
             }
             // not found
