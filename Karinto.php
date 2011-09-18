@@ -33,13 +33,14 @@ class Application
                 header("{$name}: {$value}");
             }
         }
+        // session cookies
+        if (!is_null($this->_session)) {
+            $this->_session->saveInApplication();
+        }
         // send cookies
         foreach ($this->_cookies as $c) {
             setcookie($c['name'], $c['value'], $c['expire'],
                 $c['path'], $c['domain'], $c['secure'], $c['http_only']);
-        }
-        if (!is_null($this->_session)) {
-            $this->_session->save();
         }
         // output
         echo $this->_body;
@@ -246,7 +247,7 @@ class Application
             throw new Exception('session secret key is not set');
         }
         if (is_null($this->_session)) {
-            $this->_session = new Session($this->sessionSecretKey);
+            $this->_session = new Session($this);
         }
         return $this->_session;
     }
@@ -347,15 +348,15 @@ class Session
 {
     const COOKIE_MAX_LENGTH = 4096;
 
-    protected $_secretKey;
+    protected $_app;
     protected $_vars = array();
     protected $_isAvailable = false;
     protected $_cookieName;
     protected $_cookieParams;
 
-    public function __construct($secretKey)
+    public function __construct(Application $app)
     {
-        $this->_secretKey = $secretKey;
+        $this->_app = $app;
         $this->_isAvailable = true;
 
         // use session settings
@@ -389,18 +390,19 @@ class Session
         }
     }
 
-    public function save()
+    // called at Application::__desctruct internally
+    public function saveInApplication()
     {
         if (!$this->_isAvailable) {
             return;
         }
-        $expire = time() + $this->cookieParam['lifetime'];
+        $expire = time() + $this->_cookieParams['lifetime'];
         $cookieData = base64_encode(serialize($this->_vars))
             . '--' . $this->_digest($this->_vars);
         if (strlen($cookieData) > self::COOKIE_MAX_LENGTH) {
             throw new Exception('The session data is too large.');
         }
-        $this->_sendCookie($cookieData, $expire);
+        $this->_cookie($cookieData, $expire);
     }
 
     public function setLifetime($seconds)
@@ -412,12 +414,12 @@ class Session
     {
         $this->_isAvailable = false;
         $this->_vars = array();
-        $this->_sendCookie('', time() - 3600);
+        $this->_cookie('', time() - 3600);
     }
 
     protected function _restore()
     {
-        if (!isset($_COOKIE[$this->cookieName])) {
+        if (!isset($_COOKIE[$this->_cookieName])) {
             // cookie not exists
             return;
         }
@@ -445,21 +447,21 @@ class Session
     protected function _digest($data)
     {
         $serializedData = serialize($data);
-        return hash_hmac('sha1', $serializedData, $this->_secretKey);
+        return hash_hmac('sha1', $serializedData, $this->_app->sessionSecretKey);
     }
 
-    protected function _sendCookie($value, $expire)
+    protected function _cookie($value, $expire)
     {
         $name = $this->_cookieName;
         $params = $this->_cookieParams;
 
         if (empty($params['domain']) && empty ($params['secure'])) {
-            setcookie($name, $value, $expire, $params['path']);
+            $this->_app->cookie($name, $value, $expire, $params['path']);
         } elseif (empty($params['secure'])) {
-            setcookie($name, $value, $expire,
+            $this->_app->cookie($name, $value, $expire,
                 $params['path'], $params['domain']);
         } else {
-            setcookie($name, $value, $expire,
+            $this->_app->cookie($name, $value, $expire,
                 $params['path'], $params['domain'], $params['secure']);
         }
     }
