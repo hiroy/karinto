@@ -165,7 +165,7 @@ class Application
         $this->header('Content-Type', "{$type}; charset={$charset}");
     }
 
-    public function code($code)
+    public function code($code, \Exception $e = null)
     {
         $messages = array(
             // Informational 1xx
@@ -229,7 +229,7 @@ class Application
         if ($code >= 400) {
             // error
             if (is_callable($this->_errorCallback)) {
-                call_user_func($this->_errorCallback, $code);
+                call_user_func($this->_errorCallback, $code, $e);
             }
         }
     }
@@ -288,7 +288,8 @@ class Application
                         return;
                     } catch (\Exception $e) {
                         // uncaught exception
-                        $this->code(500);
+                        $this->code(500, $e);
+                        return;
                     }
                 }
             }

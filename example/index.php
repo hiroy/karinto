@@ -9,7 +9,7 @@ session_set_cookie_params(1800);
 $app = new Application();
 $app->sessionSecretKey = 'your session secret key';
 
-$app->error(function($code) use ($app) {
+$app->error(function($code, \Exception $e = null) use ($app) {
     switch ($code) {
     case 404:
         $app->render('error_404.php');

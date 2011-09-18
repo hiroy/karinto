@@ -4,6 +4,6 @@
 <meta charset="UTF-8">
 </head>
 <body>
-Not Found
+<p>Not Found</p>
 </body>
 </html>
