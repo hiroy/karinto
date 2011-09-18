@@ -132,7 +132,7 @@ class Application
         try {
             $result = $this->fetch($template, $values);
         } catch (Exception $e) {
-            $this->code(404);
+            $this->code(404, $e);
         }
         $this->output($result);
     }
