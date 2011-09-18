@@ -230,6 +230,8 @@ class Application
             // error
             if (is_callable($this->_errorCallback)) {
                 call_user_func($this->_errorCallback, $code, $e);
+            } elseif ($e instanceof \Exception) {
+                throw $e;
             }
         }
     }

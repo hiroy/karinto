@@ -4,6 +4,6 @@
 <meta charset="UTF-8">
 </head>
 <body>
-<p>Internal Server Error</p>
+<p>Error</p>
 </body>
 </html>
