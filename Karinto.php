@@ -9,6 +9,7 @@ class Application
     public $httpVersion = '1.1';
     public $sessionSecretKey = null;
 
+    protected $_errorCallback;
     protected $_routes = array(
         'GET' => array(), 'POST' => array(),
         'PUT' => array(), 'DELETE' => array());
@@ -54,6 +55,9 @@ class Application
 
     public function error($callback)
     {
+        if (is_callable($callback)) {
+            $this->_errorCallback = $callback;
+        }
     }
 
     public function get($url, $callback)
@@ -224,6 +228,9 @@ class Application
         }
         if ($code >= 400) {
             // error
+            if (is_callable($this->_errorCallback)) {
+                call_user_func($this->_errorCallback, $code);
+            }
         }
     }
 

@@ -20,7 +20,7 @@ Karinto is a minimal application framework for PHP 5.3 or later inspired by [Sil
     $app = new Application();
     $app->templateDir = 'templates';
     
-    $app->error(function(\Exception $e, $code) use ($app) {
+    $app->error(function($code) use ($app) {
         switch ($code) {
         case 404:
             $app->render('error_404.php');
