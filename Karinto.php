@@ -161,11 +161,6 @@ class Application
         $this->header('Content-Type', "{$type}; charset={$charset}");
     }
 
-    public function contentTypeHtml($charset = null)
-    {
-        $this->contentType('text/html', $charset);
-    }
-
     public function code($code)
     {
         $messages = array(
