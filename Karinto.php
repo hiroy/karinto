@@ -5,6 +5,7 @@ class Application
 {
     public $templateDir = 'templates';
     public $encoding = 'UTF-8';
+    public $defaultContentType = 'text/html';
     public $httpVersion = '1.1';
     public $sessionSecretKey = null;
 
@@ -26,6 +27,10 @@ class Application
     public function __destruct()
     {
         // send headers
+        if (!isset($this->_headers['Content-Type'])
+            && strlen($this->defaultContentType) > 0) {
+            $this->contentType($this->defaultContentType);
+        }
         foreach ($this->_headers as $name => $value) {
             if (ctype_digit(strval($name))) {
                 header($value);
