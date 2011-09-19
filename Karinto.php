@@ -579,10 +579,6 @@ class Exception extends \Exception
 
 namespace {
 
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-});
-
 if (!function_exists('h')) {
     function h($var)
     {
