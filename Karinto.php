@@ -15,10 +15,12 @@ namespace Karinto {
 class Application
 {
     public $templateDir = 'templates';
+    public $layoutTemplate;
+    public $layoutContentVarName = 'karinto_content_for_layout';
     public $encoding = 'UTF-8';
     public $defaultContentType = 'text/html';
     public $httpVersion = '1.1';
-    public $sessionSecretKey = null;
+    public $sessionSecretKey;
 
     protected $_errorCallback;
     protected $_routes = array(
@@ -111,6 +113,14 @@ class Application
 
     public function fetch($template, array $values = array())
     {
+        $layoutTemplate = null;
+        if (!is_null($this->layoutTemplate)) {
+            $layoutTemplate = $this->template($this->layoutTemplate);
+            if (!is_file($layoutTemplate) || !is_readable($layoutTemplate)) {
+                throw new Exception("{$layoutTemplate} is unavailable");
+            }
+        }
+
         $template = $this->template($template);
         if (!is_file($template) || !is_readable($template)) {
             throw new Exception("{$template} is unavailable");
@@ -122,6 +132,14 @@ class Application
         ob_implicit_flush(false);
         include $template;
         $result = ob_get_clean();
+
+        if (!is_null($layoutTemplate)) {
+            ${$this->layoutContentVarName} = $result;
+            ob_start();
+            ob_implicit_flush(false);
+            include $layoutTemplate;
+            $result = ob_get_clean();
+        }
 
         return $result;
     }

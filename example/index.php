@@ -7,6 +7,7 @@ use Karinto\Request;
 session_set_cookie_params(1800);
 
 $app = new Application();
+$app->layoutTemplate = 'layout.php';
 $app->sessionSecretKey = 'your session secret key';
 
 $app->error(function($code, \Exception $e = null) use ($app) {
