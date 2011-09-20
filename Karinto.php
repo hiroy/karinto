@@ -375,17 +375,6 @@ class Request
         $this->_cookies = $_COOKIE;
     }
 
-    public function __get($name)
-    {
-        // only a single value will return
-        return $this->param($name);
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->_params[$name]);
-    }
-
     public function param($name, $isMultiple = false)
     {
         if (isset($this->_params[$name])) {
