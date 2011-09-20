@@ -12,32 +12,32 @@
 
 namespace Karinto {
 
-class Vars implements \ArrayAccess
+abstract class Vars implements \ArrayAccess
 {
     protected $_vars = array();
 
-    public function offsetSet($name, $value)
+    public function offsetSet($offset, $value)
     {
-        $this->_vars[$name] = $value;
+        $this->_vars[$offset] = $value;
     }
 
-    public function offsetGet($name)
+    public function offsetGet($offset)
     {
-        if (isset($this->_vars[$name])) {
-            return $this->_vars[$name];
+        if (isset($this->_vars[$offset])) {
+            return $this->_vars[$offset];
         }
         return null;
     }
 
-    public function offsetExists($name)
+    public function offsetExists($offset)
     {
-        return isset($this->_vars[$name]);
+        return isset($this->_vars[$offset]);
     }
 
-    public function offsetUnset($name)
+    public function offsetUnset($offset)
     {
-        if (isset($this->_vars[$name])) {
-            unset($this->_vars[$name]);
+        if (isset($this->_vars[$offset])) {
+            unset($this->_vars[$offset]);
         }
     }
 }
