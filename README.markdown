@@ -1,4 +1,4 @@
-# The plan of Karinto
+# Karinto
 
 Karinto is a minimal application framework for PHP 5.3 or later inspired by [Silex](http://silex.sensiolabs.org/) based on [Lune](https://github.com/hiroy/lune).
 
