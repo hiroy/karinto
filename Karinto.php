@@ -12,7 +12,7 @@
 
 namespace Karinto {
 
-class VarHolder implements \ArrayAccess
+class Vars implements \ArrayAccess
 {
     protected $_vars = array();
 
@@ -42,7 +42,7 @@ class VarHolder implements \ArrayAccess
     }
 }
 
-class Application extends VarHolder
+class Application extends Vars
 {
     public $templateDir = 'templates';
     public $layoutTemplate;
@@ -402,7 +402,7 @@ class Request
     }
 }
 
-class Session extends VarHolder
+class Session extends Vars
 {
     const COOKIE_MAX_LENGTH = 4096;
 
