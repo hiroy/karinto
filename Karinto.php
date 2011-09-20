@@ -12,7 +12,37 @@
 
 namespace Karinto {
 
-class Application
+class VarHolder implements \ArrayAccess
+{
+    protected $_vars = array();
+
+    public function offsetSet($name, $value)
+    {
+        $this->_vars[$name] = $value;
+    }
+
+    public function offsetGet($name)
+    {
+        if (isset($this->_vars[$name])) {
+            return $this->_vars[$name];
+        }
+        return null;
+    }
+
+    public function offsetExists($name)
+    {
+        return isset($this->_vars[$name]);
+    }
+
+    public function offsetUnset($name)
+    {
+        if (isset($this->_vars[$name])) {
+            unset($this->_vars[$name]);
+        }
+    }
+}
+
+class Application extends VarHolder
 {
     public $templateDir = 'templates';
     public $layoutTemplate;
@@ -126,6 +156,7 @@ class Application
             throw new Exception("{$template} is unavailable");
         }
 
+        $values = array_merge($this->_vars, $values);
         extract($values, EXTR_SKIP);
 
         ob_start();
@@ -382,12 +413,11 @@ class Request
     }
 }
 
-class Session
+class Session extends VarHolder
 {
     const COOKIE_MAX_LENGTH = 4096;
 
     protected $_app;
-    protected $_vars = array();
     protected $_isAvailable = false;
     protected $_cookieName;
     protected $_cookieParams;
@@ -401,31 +431,6 @@ class Session
         $this->_cookieName = session_name();
         $this->_cookieParams = session_get_cookie_params();
         $this->_restore();
-    }
-
-    public function __set($name, $value)
-    {
-        $this->_vars[$name] = $value;
-    }
-
-    public function __get($name)
-    {
-        if (isset($this->_vars[$name])) {
-            return $this->_vars[$name];
-        }
-        return null;
-    }
-
-    public function __isset($name)
-    {
-        return isset($this->_vars[$name]);
-    }
-
-    public function __unset($name)
-    {
-        if (isset($this->_vars[$name])) {
-            unset($this->_vars[$name]);
-        }
     }
 
     // called at Application::__desctruct internally

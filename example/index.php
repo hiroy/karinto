@@ -27,13 +27,15 @@ $app->get('/', function(Request $req) use ($app) {
 
 $app->get('/foo', function(Request $req) use ($app) {
     $session = $app->session();
-    $session->name = $req->name;
-    $app->render('foo.php', array('name' => $req->name));
+    $session['name'] = $req->param('name');
+    $app['name'] = $req->param('name');
+    $app->render('foo.php');
 });
 
 $app->get('/bar', function(Request $req) use ($app) {
     $session = $app->session();
-    $app->render('bar.php', array('name' => $session->name));
+    $app['name'] = $session['name'];
+    $app->render('bar.php');
 });
 
 $app->run();
