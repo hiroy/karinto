@@ -141,7 +141,7 @@ class Application extends Vars
         return $this->templateDir . DIRECTORY_SEPARATOR . $template;
     }
 
-    public function fetch($template, array $values = array())
+    public function fetch($template, array $vars = array())
     {
         $layoutTemplate = null;
         if (!is_null($this->layoutTemplate)) {
@@ -156,8 +156,8 @@ class Application extends Vars
             throw new Exception("{$template} is unavailable");
         }
 
-        $values = array_merge($this->_vars, $values);
-        extract($values, EXTR_SKIP);
+        $vars = array_merge($this->_vars, $vars);
+        extract($vars, EXTR_SKIP);
 
         ob_start();
         ob_implicit_flush(false);
@@ -175,11 +175,11 @@ class Application extends Vars
         return $result;
     }
 
-    public function render($template, array $values = array())
+    public function render($template, array $vars = array())
     {
         $result = '';
         try {
-            $result = $this->fetch($template, $values);
+            $result = $this->fetch($template, $vars);
         } catch (Exception $e) {
             $this->code(404, $e);
         }
