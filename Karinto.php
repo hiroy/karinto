@@ -131,6 +131,13 @@ class Application extends Vars
         }
     }
 
+    public function abort($code, $message = null)
+    {
+        $e = new Exception($message);
+        $this->code($code, $e);
+        exit;
+    }
+
     public function output($text)
     {
         $this->_body .= $text;
