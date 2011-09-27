@@ -374,12 +374,14 @@ class Request
     protected $_params;
     protected $_urlParams;
     protected $_cookies;
+    protected $_userAgent;
 
     public function __construct(array $urlParams = array())
     {
         $this->_params = $_POST + $_GET;
         $this->_urlParams = $urlParams;
         $this->_cookies = $_COOKIE;
+        $this->_userAgent = Utils::env('HTTP_USER_AGENT');
     }
 
     public function param($name, $isMultiple = false)
@@ -406,6 +408,22 @@ class Request
             return $this->_cookies[$name];
         }
         return null;
+    }
+
+    public function isMobileIos()
+    {
+        if (preg_match('/iPhone|iPod/', $this->_userAgent)) {
+            return true;
+        }
+        return false;
+    }
+
+    public function isMobileAndroid()
+    {
+        if (preg_match('/Android(.+)Mobile/', $this->_userAgent)) {
+            return true;
+        }
+        return false;
     }
 }
 
