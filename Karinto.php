@@ -98,37 +98,42 @@ class Application extends Vars
 
     public function error($callback)
     {
-        if (is_callable($callback)) {
-            $this->_errorCallback = $callback;
+        if (!is_callable($callback)) {
+            throw new NotCallableException();
         }
+        $this->_errorCallback = $callback;
     }
 
     public function get($url, $callback)
     {
-        if (is_callable($callback)) {
-            $this->_routes['GET'][$url] = $callback;
+        if (!is_callable($callback)) {
+            throw new NotCallableException();
         }
+        $this->_routes['GET'][$url] = $callback;
     }
 
     public function post($url, $callback)
     {
-        if (is_callable($callback)) {
-            $this->_routes['POST'][$url] = $callback;
+        if (!is_callable($callback)) {
+            throw new NotCallableException();
         }
+        $this->_routes['POST'][$url] = $callback;
     }
 
     public function put($url, $callback)
     {
-        if (is_callable($callback)) {
-            $this->_routes['PUT'][$url] = $callback;
+        if (!is_callable($callback)) {
+            throw new NotCallableException();
         }
+        $this->_routes['PUT'][$url] = $callback;
     }
 
     public function delete($url, $callback)
     {
-        if (is_callable($callback)) {
-            $this->_routes['DELETE'][$url] = $callback;
+        if (!is_callable($callback)) {
+            throw new NotCallableException();
         }
+        $this->_routes['DELETE'][$url] = $callback;
     }
 
     public function abort($code, $message = null)
@@ -591,6 +596,10 @@ class Utils
 }
 
 class Exception extends \Exception
+{
+}
+
+class NotCallableException extends Exception
 {
 }
 
