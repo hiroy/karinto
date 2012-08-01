@@ -1,14 +1,15 @@
 {
   "name": "karinto/karinto",
-  "type": "framework",
+  "type": "library",
   "description": "a minimal web application framework",
-  "keywords": [],
+  "keywords": ["framework"],
   "homepage": "https://github.com/hiroy/karinto",
-  "license": "BSD",
+  "license": "BSD-3-Clause",
   "authors": [
     {
       "name": "Hiroyuki Yamaoka",
       "email": "yamaoka@itsumo.cc",
+      "homepage": "http://itsumo.cc/",
       "role": "Developer"
     }
   ],
