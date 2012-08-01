@@ -62,3 +62,15 @@ Please access "/index.php/foo?name=bar"
 
 This code is free to use under the terms of the New BSD License.
 
+## With Composer
+
+If using [Composer](http://getcomposer.org/) as a dependency management tool, you can bring Karinto in your environment easily with settings below.
+
+```
+{
+  "require": {
+    "karinto/karinto": "dev-master"
+  }
+}
+```
+
