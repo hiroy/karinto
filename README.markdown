@@ -68,8 +68,9 @@ If using [Composer](http://getcomposer.org/) as a dependency management tool, yo
 
 ```
 {
+  "minimum-stability": "dev",
   "require": {
-    "karinto/karinto": "dev-master"
+    "karinto/karinto": "1.0.*"
   }
 }
 ```
