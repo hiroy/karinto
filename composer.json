@@ -2,7 +2,7 @@
   "name": "karinto/karinto",
   "type": "library",
   "description": "a minimal web application framework",
-  "keywords": ["framework"],
+  "keywords": ["microframework"],
   "homepage": "https://github.com/hiroy/karinto",
   "license": "BSD-3-Clause",
   "authors": [
@@ -14,7 +14,8 @@
     }
   ],
   "require": {
-    "php": ">=5.3.3"
+    "php": ">=5.3.3",
+    "ext-mbstring": "*"
   },
   "autoload": {
     "files": ["Karinto.php"]
