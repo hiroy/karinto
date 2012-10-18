@@ -5,7 +5,7 @@
  * PHP version 5.3 or later
  *
  * @author    Hiroyuki Yamaoka
- * @copyright 2011 Hiroyuki Yamaoka
+ * @copyright 2011,2012 Hiroyuki Yamaoka
  * @link      https://github.com/hiroy/karinto
  * @license   http://opensource.org/licenses/bsd-license.php New BSD License
  */
@@ -45,12 +45,15 @@ abstract class Vars implements \ArrayAccess
 class Application extends Vars
 {
     public $templateDir = 'templates';
+    public $templateCacheDir = 'cache';
     public $layoutTemplate;
     public $layoutContentVarName = 'karinto_content_for_layout';
     public $encoding = 'UTF-8';
     public $defaultContentType = 'text/html';
     public $httpVersion = '1.1';
     public $sessionSecretKey;
+
+    public $usingTwig = false;
 
     protected $_errorCallback;
     protected $_routes = array(
@@ -155,33 +158,53 @@ class Application extends Vars
 
     public function fetch($template, array $vars = array())
     {
-        $layoutTemplate = null;
-        if (!is_null($this->layoutTemplate)) {
-            $layoutTemplate = $this->template($this->layoutTemplate);
-            if (!is_file($layoutTemplate) || !is_readable($layoutTemplate)) {
-                throw new Exception("{$layoutTemplate} is unavailable");
-            }
-        }
-
-        $template = $this->template($template);
-        if (!is_file($template) || !is_readable($template)) {
-            throw new Exception("{$template} is unavailable");
-        }
-
+        $result = '';
         $vars = array_merge($this->_vars, $vars);
-        extract($vars, EXTR_SKIP);
 
-        ob_start();
-        ob_implicit_flush(false);
-        include $template;
-        $result = ob_get_clean();
+        if ($this->usingTwig) {
+            // with Twig
+            try {
+                $twigLoader = new Twig_Loader_Filesystem($this->templateDir);
+                $twigEnvironment = new Twig_Environment($twigLoader, array(
+                    'cache' => $this->templateCacheDir,
+                    'encoding' => $this->encoidng,
+                ));
+                $twigTemplate = $twigEnvironment->loadTemplate($template);
+                $result = $twigTemplate->render($vars);
+            } catch (Twig_Error_Loader $e) {
+                throw new Exception("{$template} is unavailable", $e->getCode(), $e);
+            } catch (Twig_Error $e) {
+                throw new Exception('Twig error', $e->getCode(), $e);
+            }
+        } else {
+            // with plain PHP templates
+            $layoutTemplate = null;
+            if (!is_null($this->layoutTemplate)) {
+                $layoutTemplate = $this->template($this->layoutTemplate);
+                if (!is_file($layoutTemplate) || !is_readable($layoutTemplate)) {
+                    throw new Exception("{$layoutTemplate} is unavailable");
+                }
+            }
 
-        if (!is_null($layoutTemplate)) {
-            ${$this->layoutContentVarName} = $result;
+            $template = $this->template($template);
+            if (!is_file($template) || !is_readable($template)) {
+                throw new Exception("{$template} is unavailable");
+            }
+
+            extract($vars, EXTR_SKIP);
+
             ob_start();
             ob_implicit_flush(false);
-            include $layoutTemplate;
+            include $template;
             $result = ob_get_clean();
+
+            if (!is_null($layoutTemplate)) {
+                ${$this->layoutContentVarName} = $result;
+                ob_start();
+                ob_implicit_flush(false);
+                include $layoutTemplate;
+                $result = ob_get_clean();
+            }
         }
 
         return $result;
