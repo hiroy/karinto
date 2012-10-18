@@ -7,6 +7,10 @@ Karinto is a minimal application framework for PHP 5.3 or later inspired by [Sil
  * PHP 5.3 or later
  * mbstring
 
+### Optional
+
+You can use [Twig](http://twig.sensiolabs.org/) as a template engine instead of using plain PHP templates.
+
 ## Usage
 
 ### /index.php
@@ -19,6 +23,10 @@ Karinto is a minimal application framework for PHP 5.3 or later inspired by [Sil
     
     $app = new Application();
     $app->templateDir = 'templates';
+    
+    // if using Twig
+    // $app->templateCacheDir = 'cache';
+    // $app->withTwig = true;
     
     $app->error(function($code, \Exception $e = null) use ($app) {
         switch ($code) {
@@ -71,6 +79,18 @@ If using [Composer](http://getcomposer.org/) as a dependency management tool, yo
   "minimum-stability": "dev",
   "require": {
     "karinto/karinto": "1.0.*"
+  }
+}
+```
+
+Using [Twig](http://twig.sensiolabs.org/) with Karinto, you should set as the same below:
+
+```
+{
+  "minimum-stability": "dev",
+  "require": {
+    "karinto/karinto": "1.0.*",
+    "twig/twig": "1.*"
   }
 }
 ```
