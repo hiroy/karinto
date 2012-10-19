@@ -26,7 +26,7 @@ You can use [Twig](http://twig.sensiolabs.org/) as a template engine instead of 
     
     // if using Twig
     // $app->templateCacheDir = 'cache';
-    // $app->withTwig = true;
+    // $app->useTwig();
     
     $app->error(function($code, \Exception $e = null) use ($app) {
         switch ($code) {

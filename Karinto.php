@@ -53,7 +53,7 @@ class Application extends Vars
     public $httpVersion = '1.1';
     public $sessionSecretKey;
 
-    public $withTwig = false;
+    public $twig;
 
     protected $_errorCallback;
     protected $_routes = array(
@@ -97,6 +97,19 @@ class Application extends Vars
         // output
         echo $this->_body;
         ob_end_flush();
+    }
+
+    public function useTwig()
+    {
+        try {
+            $twigLoader = new \Twig_Loader_Filesystem($this->templateDir);
+            $this->twig = new \Twig_Environment($twigLoader, array(
+                'cache' => $this->templateCacheDir,
+                'encoding' => $this->encoding,
+            ));
+        } catch (\Twig_Error $e) {
+            $this->code(500, $e);
+        }
     }
 
     public function error($callback)
@@ -161,15 +174,10 @@ class Application extends Vars
         $result = '';
         $vars = array_merge($this->_vars, $vars);
 
-        if ($this->withTwig) {
+        if ($this->twig) {
             // with Twig
             try {
-                $twigLoader = new \Twig_Loader_Filesystem($this->templateDir);
-                $twigEnvironment = new \Twig_Environment($twigLoader, array(
-                    'cache' => $this->templateCacheDir,
-                    'encoding' => $this->encoidng,
-                ));
-                $twigTemplate = $twigEnvironment->loadTemplate($template);
+                $twigTemplate = $this->twig->loadTemplate($template);
                 $result = $twigTemplate->render($vars);
             } catch (\Twig_Error_Loader $e) {
                 throw new Exception("{$template} is unavailable", $e->getCode(), $e);
