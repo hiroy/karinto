@@ -45,7 +45,6 @@ abstract class Vars implements \ArrayAccess
 class Application extends Vars
 {
     public $templateDir = 'templates';
-    public $templateCacheDir = 'cache';
     public $layoutTemplate;
     public $layoutContentVarName = 'karinto_content_for_layout';
     public $encoding = 'UTF-8';
@@ -99,14 +98,15 @@ class Application extends Vars
         ob_end_flush();
     }
 
-    public function useTwig()
+    public function useTwig(array $options = array())
     {
+        if (!isset($options['encoding'])) {
+            $options['encoding'] = $this->encoding;
+        }
+
         try {
             $twigLoader = new \Twig_Loader_Filesystem($this->templateDir);
-            $this->twig = new \Twig_Environment($twigLoader, array(
-                'cache' => $this->templateCacheDir,
-                'encoding' => $this->encoding,
-            ));
+            $this->twig = new \Twig_Environment($twigLoader, $options);
         } catch (\Twig_Error $e) {
             $this->code(500, $e);
         }
